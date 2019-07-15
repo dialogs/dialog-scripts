@@ -50,7 +50,7 @@ export function createWebpackConfigForWeb(options: WebOptions) {
       port: 3000,
       hot: true,
       historyApiFallback: {
-        index: 'index.html',
+        index: options.entry.html,
       },
     },
   };
