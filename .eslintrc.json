@@ -1,10 +1,12 @@
 {
   "extends": ["@dlghq/eslint-config-dialog/base", "prettier"],
+  "plugins": ["flowtype"],
   "rules": {
     "no-sync": 0,
     "no-console": 0,
     "global-require": 0,
     "no-process-env": 0,
-    "no-await-in-loop": 0
+    "no-await-in-loop": 0,
+    "flowtype/no-weak-types": 1
   }
 }

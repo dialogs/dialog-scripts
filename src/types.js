@@ -14,7 +14,7 @@ export type WebpackRule = {
   test: string,
   use: string,
   include?: string,
-  exclude?: string
+  exclude?: string,
 };
 
 export type CopyWebpackPluginConfig = {
