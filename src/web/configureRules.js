@@ -9,7 +9,7 @@ const resolve = require('../utils/resolve');
 const configurePostCSS = require('./configurePostCSS');
 import type { WebOptions } from '../types';
 
-function toArray<T>(value: ?(T | Array<T>)): Array<T> {
+function toArray<T>(value: ?(T | Array<T>)): $ReadOnlyArray<T> {
   if (value) {
     if (Array.isArray(value)) {
       return value;
