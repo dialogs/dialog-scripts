@@ -5,6 +5,7 @@
 
 const path = require('path');
 
+const notarize = require('electron-notarize');
 const webpackBuild = require('../webpack/build');
 const electronBuild = require('../electron/build');
 const logger = require('../utils/logger');
@@ -19,6 +20,7 @@ module.exports = {
   description: 'Build desktop application',
   options: [
     ['--force-sign', 'Fail if signing failed'],
+    ['--force-notarize', 'Fail if signing failed'],
     ['--publish', 'Publish artifacts to electron-release-server'],
     ['--pack-only', 'Build app without webpack bundling'],
     [
@@ -97,6 +99,40 @@ module.exports = {
         protocols: {
           name: config.desktop.productName + ' URL',
           schemes: [config.desktop.schema],
+        },
+        async afterSign(context) {
+          const [target] = context.targets;
+          if (
+            target &&
+            target.name === 'zip' &&
+            context.electronPlatformName === 'darwin'
+          ) {
+            const {
+              APPLE_ID: appleId,
+              APPLE_ID_PASSWORD: appleIdPassword,
+              APPLE_TEAM_ID: appleTeamId,
+            } = process.env;
+            if ((args.forceNotarize && !appleId) || !appleIdPassword) {
+              throw new Error(
+                'Notarization failed: APPLE_ID or APPLE_ID_PASSWORD not defined',
+              );
+            }
+
+            if (appleId && appleIdPassword) {
+              await notarize({
+                appleId,
+                appleIdPassword,
+                ascProvider: appleTeamId,
+                appBundleId: config.desktop.appId,
+                appPath: path.join(
+                  context.appOutDir,
+                  `${context.packager.appInfo.productFilename}.app`,
+                ),
+              });
+            } else {
+              logger.warn('Your macOS app would not be notarized');
+            }
+          }
         },
       },
     });
