@@ -4,8 +4,8 @@
  */
 
 const path = require('path');
+const { notarize } = require('electron-notarize');
 
-const notarize = require('electron-notarize');
 const webpackBuild = require('../webpack/build');
 const electronBuild = require('../electron/build');
 const logger = require('../utils/logger');
@@ -112,7 +112,7 @@ module.exports = {
               APPLE_ID_PASSWORD: appleIdPassword,
               APPLE_TEAM_ID: appleTeamId,
             } = process.env;
-            if ((args.forceNotarize && !appleId) || !appleIdPassword) {
+            if (args.forceNotarize && (!appleId || !appleIdPassword)) {
               throw new Error(
                 'Notarization failed: APPLE_ID or APPLE_ID_PASSWORD not defined',
               );
